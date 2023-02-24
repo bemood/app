@@ -4,7 +4,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from "./screens/HomeScreen";
 import {SafeAreaProvider} from "react-native-safe-area-context";
 import {NativeBaseProvider} from "native-base";
+import {createNativeStackNavigator} from "@react-navigation/native-stack";
 
+const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export default function App() {
