@@ -1,7 +1,7 @@
 import {Box, Button, Center, FormControl, Heading, Input, Link, VStack, Flex, Text} from "native-base";
 import {useState} from "react";
-import axios from "axios";
 import { Logo } from "../../components/logo";
+import { useAuth } from "../../hooks/useAuth";
 
 export interface LoginData {
   email: string;
@@ -15,16 +15,10 @@ const initialLoginData: LoginData = {
 
 export default function LoginScreen({ navigation }: any) {
   const [data, setData] = useState<LoginData>(initialLoginData);
+  const auth = useAuth();
 
   const login = () => {
-    axios.post('/authenticate', data)
-      .then(response => {
-        console.log('response: ', response.data)
-        navigation.navigate("Home")
-      })
-      .catch(error => {
-        console.log('error: ', error.response?.data)
-      });
+    auth.signIn(data);
   };
 
   return (
