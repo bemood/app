@@ -71,6 +71,10 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
     //Persist the data in the Async Storage
     //to be recovered in the next user session.
     AsyncStorage.setItem('@AuthData', JSON.stringify(_authData));
+
+    // cal whoami method
+    // to get user information
+    await whoami();
   };
 
   const signOut = async () => {
