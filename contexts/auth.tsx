@@ -32,10 +32,14 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
 
   async function whoami(): Promise<void> {
     try {
-      const response = await axios.get('/users/me')
+      const response = await axios.get('me/users/')
 
       if (response.data && authData?.auth_token) {
-        setAuthData({ ...authData, user: response.data })
+        const _authData = { ...authData, user: response.data } 
+        
+        setAuthData(_authData)
+
+        AsyncStorage.setItem('@AuthData', JSON.stringify(_authData));
       }
     } catch (error) {
       signOut();
@@ -63,6 +67,8 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
     //call the service passing credential (email and password).
     //In a real App this data will be provided by the user from some InputText components.
     const _authData = await (await axios.post('/authenticate', credentials)).data
+
+    axios.defaults.headers.common['Authorization'] = _authData?.auth_token;
 
     //Set the data in the context, so the App can be notified
     //and send the user to the AuthStack
