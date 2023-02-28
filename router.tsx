@@ -5,16 +5,15 @@ import LoginScreen from "./screens/auth/LoginScreen";
 import RegisterScreen from "./screens/auth/RegisterScreen";
 import HomeScreen from "./screens/HomeScreen";
 import { Text } from "native-base";
+import ProfileScreen from "./screens/ProfileScreen";
 
 const Tab = createBottomTabNavigator();
 
 const AppTab = () => {
   return (
-    <Tab.Navigator
-      tabBar={() => null}
-      screenOptions={{ headerShown: false }}
-    >
+    <Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   )
 }
