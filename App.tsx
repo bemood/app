@@ -4,7 +4,7 @@ import axios from "axios";
 import { AuthProvider } from './contexts/auth';
 import Router from './router';
 
-axios.defaults.baseURL = 'http://192.168.1.17:3000/api'
+axios.defaults.baseURL = 'http://192.168.1.14:3000/api'
 
 const theme = extendTheme({
   config: {

@@ -3,38 +3,33 @@ import { Box, VStack, Heading, Image, Avatar, Flex, Center, Text, HStack, Divide
 import { useAuth } from "../hooks/useAuth";
 import { useEffect, useState } from "react";
 import axios from "axios";
-
-const posts = [
-  { name: 'Post 1', likes: 10 },
-  { name: 'Post 2', likes: 10 },
-]
+import {Platform} from "react-native";
+import moment from "moment";
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const { authData } = useAuth();
-  // const [posts, setPosts] = useState<any[]>([]);
-
-  console.log(authData)
+  const [posts, setPosts] = useState<any[]>([]);
 
   const [tab, setTab] = useState<string>("posts");
 
-  // const getPosts = async () => {
-  //   const response = await axios.get('/me/posts');
-  //   setPosts(await response.data?.posts);
-  // }
+  const getPosts = async () => {
+    const response = await axios.get('/me/posts');
+    setPosts(await response.data?.posts);
+  }
 
-  // useEffect(() => {
-  //   getPosts();
-  // }, [])
+  useEffect(() => {
+    getPosts();
+  }, [])
 
   return (
     <Box
-      paddingTop={insets.top}
-      paddingBottom={insets.bottom}
-      paddingLeft={insets.left}
-      paddingRight={insets.right}
+      paddingTop={Platform.OS === 'android' ? insets.top : 0}
+      paddingBottom={Platform.OS === 'android' ? insets.bottom : 0}
+      paddingLeft={Platform.OS === 'android' ? insets.left : 0}
+      paddingRight={Platform.OS === 'android' ? insets.right : 0}
     >
-      <Box mx={10} mt={10}>
+      <Box mx={5} mt={10}>
         <HStack space={8} justifyContent={"center"} alignItems={"center"}>
           <Avatar size={"xl"} bg={"gray.300"} source={{
             uri: "https://images.squarespace-cdn.com/content/v1/5446f93de4b0a3452dfaf5b0/1626904421257-T6I5V5IQ4GI2SJ8EU82M/Above+Avalon+Neil+Cybart?format=500w"
@@ -100,23 +95,35 @@ export default function ProfileScreen() {
           {tab === "posts" ? (
             <>
               <VStack>
-                {posts.map((post) => (
-                  <Box rounded={"lg"} my={3} h={70} backgroundColor={"gray.300"}>
-                    <HStack space={3}>
+                {posts.map((post, idx) => (
+                  <Box key={idx} rounded={"lg"} my={3} h={100} backgroundColor={"gray.200"}>
+                    <HStack>
                       <Image
                         roundedTopLeft={"lg"}
                         roundedBottomLeft={"lg"}
-                        w={70}
-                        h={70}
+                        w={100}
+                        h={100}
                         alt="music image" 
                         source={{ 
-                          uri: 'https://upload.wikimedia.org/wikipedia/en/5/5b/Noir_D%C3%A9sir_-_Des_visages_des_figures.jpg' 
+                          uri: post.music?.music?.image,
                         }}
                       />
-                      <Box w={"full"} flexDirection={"row"} justifyContent={"space-between"}>
-                        <Text>{post.name}</Text>
-                        <Text>(4:03)</Text>
-                      </Box>
+                      <VStack mx={3} flex={1} justifyContent={"space-between"}>
+                        <HStack w={"full"} justifyContent={"space-between"} alignItems={"center"}>
+                          <Text fontSize={"lg"} fontWeight={"bold"}>{post.music?.music?.name}</Text>
+                          <Text>(4:03)</Text>
+                        </HStack>
+                        <Box>
+                          <Text>{post.music?.music?.artist}</Text>
+                        </Box>
+                        <Box>
+                          <Text>{post.mood?.emojie}</Text>
+                        </Box>
+                        <HStack justifyContent={"space-between"} alignItems={"center"}>
+                          <Text>Posted on {moment(post.created_at).format('D MMMM')}</Text>
+                          <Text>{post.like_count} 🤍</Text>
+                        </HStack>
+                      </VStack>
                     </HStack>
                   </Box>
                 ))}
