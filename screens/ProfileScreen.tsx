@@ -1,5 +1,14 @@
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Box, VStack, Avatar, Center, Text, HStack, Button } from 'native-base';
+import {
+  Box,
+  VStack,
+  Avatar,
+  Center,
+  Text,
+  HStack,
+  Button,
+  ScrollView,
+} from 'native-base';
 import { useAuth } from '../hooks/useAuth';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -8,7 +17,7 @@ import { PostCard } from '../components/posts/PostCard';
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
-  const { authData } = useAuth();
+  const { authData, signOut } = useAuth();
   const [posts, setPosts] = useState<any[]>([]);
   const [likedPosts, setLikedPosts] = useState<any[]>([]);
 
@@ -37,6 +46,10 @@ export default function ProfileScreen() {
       paddingRight={Platform.OS === 'android' ? insets.right : 0}
     >
       <Box mx={5} mt={10}>
+        <Button mb={5} onPress={signOut}>
+          Logout
+        </Button>
+
         <HStack space={8} justifyContent={'center'} alignItems={'center'}>
           <Avatar
             size={'xl'}
@@ -98,29 +111,50 @@ export default function ProfileScreen() {
 
         <Box mt={5}>
           {tab === 'posts' ? (
-            <>
+            <ScrollView>
               <VStack>
                 {posts.length === 0 && (
                   <Text textAlign={'center'}>No posts yet</Text>
                 )}
 
                 {posts.map((post, idx) => (
-                  <PostCard key={idx} post={post} />
+                  <PostCard
+                    key={'my-post-' + idx}
+                    post={post}
+                    refreshPosts={getPosts}
+                  />
                 ))}
               </VStack>
-            </>
+            </ScrollView>
           ) : (
-            <>
+            <ScrollView>
               <VStack>
                 {likedPosts.length === 0 && (
                   <Text textAlign={'center'}>No liked posts yet</Text>
                 )}
 
                 {likedPosts.map((post, idx) => (
-                  <PostCard key={idx} post={post} />
+                  <Box key={'liked-post-' + idx}>
+                    <HStack alignItems={'center'} my={2}>
+                      <Avatar
+                        w={30}
+                        h={30}
+                        source={{
+                          uri: post.creator.image
+                            ? 'http://192.168.1.14:3000/api' +
+                              post.creator.image
+                            : 'https://picsum.photos/200',
+                        }}
+                      />
+                      <Text ml={3} fontSize={'lg'}>
+                        {post.creator.name}
+                      </Text>
+                    </HStack>
+                    <PostCard post={post} refreshPosts={getLikedPosts} />
+                  </Box>
                 ))}
               </VStack>
-            </>
+            </ScrollView>
           )}
         </Box>
       </Box>

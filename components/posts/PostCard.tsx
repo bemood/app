@@ -1,11 +1,20 @@
 import { HStack, Box, Image, Text, VStack } from 'native-base';
 import moment from 'moment';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import axios from 'axios';
 
 interface Props {
   post: any;
+  refreshPosts: () => void;
 }
 
-export const PostCard: React.FC<Props> = ({ post }: Props) => {
+export const PostCard: React.FC<Props> = ({ post, refreshPosts }: Props) => {
+  const likePost = () => {
+    axios.post('/likes/' + post.id).then(() => {
+      refreshPosts();
+    });
+  };
+
   return (
     <Box rounded={'lg'} my={3} h={100} backgroundColor={'gray.200'}>
       <HStack>
@@ -38,7 +47,15 @@ export const PostCard: React.FC<Props> = ({ post }: Props) => {
           </Box>
           <HStack justifyContent={'space-between'} alignItems={'center'}>
             <Text>Posted on {moment(post.created_at).format('D MMMM')}</Text>
-            <Text>{post.like_count} 🤍</Text>
+            <HStack alignItems={'center'}>
+              <Text mr={1}>{post.like_count}</Text>
+              <Ionicons
+                onPress={likePost}
+                name={post.liked ? 'heart' : 'heart-outline'}
+                size={18}
+                color={'black'}
+              />
+            </HStack>
           </HStack>
         </VStack>
       </HStack>
